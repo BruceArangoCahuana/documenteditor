@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<!--
+Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+For licensing, see LICENSE.md or http://ckeditor.com/license
+-->
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Editor with Document user interface</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="demo.css" />
+        <link rel="stylesheet" href="content.css" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+ 
+    <body>
+   
+        <div class="bg-green-300 px-1 py-1 border-green-700 border-l-4 mb-1" id="alert" style="display: none;">
+            <span class="text-gree-400" id="mssg"></span>
+        </div>
+   
+        <div
+            id="cke5-editor-types-demo-document"
+            class="cke5-editor-types-demo-document__wrapper"
+        >
+            <div class="cke5-editor-types-demo-document__toolbar-container"></div>
+            <div class="cke5-editor-types-demo-document__outline"></div>
+            <div class="cke5-editor-types-demo-document__content-container">
+                <div class="cke5-editor-types-demo-document__content">
+                </div>
+            </div>
+        </div>
+       
+        <div style="display: flex;justify-content: center; margin: auto;">
+            <button id="buttom" class="text-white"
+            style="width: 200px;background: rgba(0, 30, 56, 1);
+            border-radius:20px ; height: 40px; margin-top: 51px;
+            ">Enviar</button>
+        </div>
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const detalle = urlParams.get('detalle');
+            const editorAltura = document.querySelector(".MuiBox-root")
+            
+       
+            const enviarButton = document.getElementById('buttom');
+       
+            if (detalle === 'true') {
+                enviarButton.style.display = 'none';
+                console.log(editorAltura)
+
+            } else {
+                enviarButton.style.display = 'block';
+            }
+        </script>
+       
+        <script src="https://cdn.ckbox.io/CKBox/2.0.0/ckbox.js"></script>
+        <script src="./dist/main.js"></script>
+       
+    </body>
+</html>
