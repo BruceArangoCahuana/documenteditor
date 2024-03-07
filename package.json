@@ -67,7 +67,7 @@
 	"scripts": {
 		"build": "webpack --mode production",
 		"build-dev": "webpack --mode development",
-		"start": "webpack serve --open /index.html --mode development"
+		"start": "node --max-old-space-size=4096 node_modules/webpack/bin/webpack.js serve --open /index.html --mode development"
 	},
 	"dependencies": {
 		"axios": "^1.6.7",
