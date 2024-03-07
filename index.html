@@ -31,32 +31,65 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
                 </div>
             </div>
         </div>
+
+        
        
-        <div style="display: flex;justify-content: center; margin: auto;">
-            <button id="buttom" class="text-white"
-            style="width: 200px;background: rgba(0, 30, 56, 1);
-            border-radius:20px ; height: 40px; margin-top: 51px;
-            ">Enviar</button>
+        <div style="display: none;justify-content: center; margin: auto;" id="container1">
+           <div id="btncontainer"></div>
         </div>
         <script>
             const urlParams = new URLSearchParams(window.location.search);
             const detalle = urlParams.get('detalle');
+             const templateChildren = urlParams.get('childre');
+             const edit = urlParams.get('edit');
+             const adjunt = urlParams.get('adjuntar')
             const editorAltura = document.querySelector(".MuiBox-root")
-            
+         
+
+            const container1 = document.getElementById('container1')
+            const btncontainer = document.getElementById('btncontainer')
        
             const enviarButton = document.getElementById('buttom');
-       
-            if (detalle === 'true') {
-                enviarButton.style.display = 'none';
-                console.log(editorAltura)
+            const enviarButtonChildrem = document.getElementById('buttomChildren');
+          
+            if (edit === 'true') {
+                container1.style.display = 'flex';
+                    btncontainer.innerHTML = ` <button id="enviar" class="text-white"
+                style="width: 200px;background: rgba(0, 30, 56, 1);
+                border-radius:20px ; height: 40px; margin-top: 51px;
+                ">Enviar</button>`;
+            } 
 
-            } else {
-                enviarButton.style.display = 'block';
+            if (edit === 'false') {
+                container1.style.display = 'none';
+            } 
+            if (templateChildren === 'true') {
+                container1.style.display = 'flex';
+                btncontainer.innerHTML = `
+                <button id="cargar" class="text-white"
+                style="width: 200px;background: rgba(0, 30, 56, 1);
+                border-radius:20px ; height: 40px; margin-top: 51px;
+                ">Cargar</button>
+                `;
+                const cargar = document.getElementById('cargar');
+                cargar.addEventListener('click', () => {
+                
+                    window.parent.postMessage({ type: 'modal' }, '*');
+                });
+
+            } 
+            if(adjunt === 'true'){
+                container1.style.display = 'flex';
+                btncontainer.innerHTML = `
+                <button id="adj" class="text-white"
+                style="width: 200px;background: rgba(0, 30, 56, 1);
+                border-radius:20px ; height: 40px; margin-top: 51px;
+                ">Adjuntar Documento</button>
+                `;
             }
         </script>
        
         <script src="https://cdn.ckbox.io/CKBox/2.0.0/ckbox.js"></script>
         <script src="./dist/main.js"></script>
-       
     </body>
 </html>

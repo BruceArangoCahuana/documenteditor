@@ -15,7 +15,8 @@ const CKBOX_TOKEN_URL = '';
 const WEB_SPELL_CHECKER_LICENSE_KEY = '';
 
 import DecoupledEditor from '@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor';
-
+import moment from 'moment'
+import axios from 'axios';
 import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
 import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment';
 import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat';
@@ -583,7 +584,9 @@ function DocumentOutlineToggler(editor) {
 		editor.editing.view.focus();
 	}
 }
-
+var queryString = window.location.search;
+var urlParams = new URLSearchParams(queryString);
+var leer = urlParams.get('read'); 
 DecoupledEditor.create(
 	document.querySelector('.cke5-editor-types-demo-document__content'),
 	{
@@ -664,8 +667,8 @@ DecoupledEditor.create(
 				// 'formatPainter',
 				// '|',
 				'importWord',
-				'exportWord',
-				'exportPdf',
+				leer?'':'exportWord',
+				leer?'':'exportPdf',
 				'|',
 				'findAndReplace',
 				'selectAll',
@@ -850,14 +853,47 @@ DecoupledEditor.create(
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString);
     var idTemplate = urlParams.get('idTemplate');
-    var stateId = urlParams.get('stateId');
+
+	var trasnfer = urlParams.get('trasnfer');
+	var nombreremplazo = urlParams.get('nombreremplazo');
+	var apellidoPeterno = urlParams.get('apellidoPeterno');
+	var apellidoMaterno = urlParams.get('apellidoMaterno');
+	var read = urlParams.get('read'); 
+	var dni = urlParams.get('remplazoDNI');
+   
+	const templateId  = urlParams.get('templateId');
 	const baseURLDEV= "https://smith.cineplanet.com.pe/prince-api/api/v1"
 	const baseURLlOCAL= "http://localhost:3376/api/v1"
-
-    fetch(`${baseURLDEV}/templates/detail/${idTemplate}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.data) {
+	var idFilledTemplate = urlParams.get('idFilledTemplate');
+	var tokens = urlParams.get('tokens');
+	var clientId = urlParams.get('clientId');
+	if(read == 'true'){
+		document
+			.querySelector('.cke5-editor-types-demo-document__toolbar-container')
+			.appendChild(editor.ui.view.toolbar.element);
+			editor.enableReadOnlyMode('myReadOnlyMode');
+		
+	}
+	
+	if (idTemplate) {
+		var edit = urlParams.get("edit")
+		if (edit) {
+			document
+			.querySelector('.cke5-editor-types-demo-document__toolbar-container')
+			.appendChild(editor.ui.view.toolbar.element);
+		} else {
+		editor.enableReadOnlyMode('myReadOnlyMode');
+		}
+		console.log(edit)
+		fetch(`${baseURLlOCAL}/templates/detail/${idTemplate}`, {
+			headers: {
+				"CP-App-Client-Id": 'F5F006D8-5245-4CDF-B04F-A4E8F86C6E45',
+				'Authorization': `Bearer ${tokens}`
+			}
+		  })
+		.then(response => response.json())
+		.then(data => {
+			if (data && data.data) {
 				let contentToShow = '';
 				switch (data.data.stateId) {
 					case 1:
@@ -874,7 +910,7 @@ DecoupledEditor.create(
 						console.error('Estado no reconocido para la plantilla con ID:', templateId);
 						break;
 				}
-		
+	   
 				if (contentToShow) {
 					editor.setData(contentToShow);
 				} else {
@@ -883,63 +919,206 @@ DecoupledEditor.create(
 			} else {
 				console.error('No se encontró detalle para la plantilla con ID:', templateId);
 			}
-        })
-        .catch(error => {
-            console.error('Error al cargar el contenido de la plantilla:', error);
-        });
-		var detalle = urlParams.get('detalle');
+
+			if(trasnfer === 'true'){
+				// <img src="https://ckbox.cloud/007a9a22f04589dcccde/assets/imZXzKi1-lLI/images/1919.png"></picture>
+				editor.enableReadOnlyMode('myReadOnlyMode');
+				var editorContent = window.editor.getData();
+				const dates = new Date();
+				const setDates = moment(dates).locale('es').format('LL')
+				
+			
+				var regexEvidence = /\bevidencia1\b/g;
+				var matchesEvidence = editorContent.match(regexCity);
+
+				var regexCity = /\bvarCity\b/g;
+				var matchesCity = editorContent.match(regexCity);
+
+				var regexInicioMes = /\bvarIniMoth\b/g;
+				var matchesInicioMes = editorContent.match(regexInicioMes);
+			
+				var regexYear = /\bvarIniYear\b/g;
+				var matchesInicioYear = editorContent.match(regexYear);
+
+				var regexDay = /\bvarDay\b/g;
+				var matchesDay = editorContent.match(regexDay);
+
+				var regexMes = /\bvarMes\b/g;
+				var matchesMes = editorContent.match(regexMes);
+
+				var regexAno = /\bvarYear\b/g;
+				var matchesAno = editorContent.match(regexAno);
+
+				var regexMinute = /\bvarMinute\b/g;
+				var matchesMinute = editorContent.match(regexMinute);
+
+				
+
+
+
+				let city;
+				let iniMes;
+				let iniYear;
+				let dias;
+				let mes;
+				let ano;
+				let minuto;
+
+				if(matchesCity){
+					 city = prompt("Ingresa ciudad?");
+				}
+				if(matchesInicioMes){
+					iniMes = prompt("Indicar mes?");
+			   }
+			   if(matchesInicioYear){
+					iniYear = prompt("Indicar año?");
+		 		}
+				if(matchesDay){
+					dias = prompt("Indicar el dia");
+		 		}
+				 if(matchesMes){
+					mes = prompt("Indicar el mes?");
+		 		}
+				 if(matchesAno){
+					iniYear = prompt("Indicar el año?");
+		 		}
+				if(matchesMinute){
+					minuto=prompt("Indicar el minuto?");
+				}
+				
+				var apellidos = apellidoPeterno+" "+apellidoMaterno
+				var newEditorContent = editorContent
+								.replace(/reemplazonombre/g, nombreremplazo?nombreremplazo:'')
+								.replace(/reemplazoapellido/g, apellidos?apellidos:'')
+								.replace(/remplazoDNI/g, dni?dni:'')
+								.replace(/varDates/g,setDates?setDates:'')
+								.replace(/varCity/g,city?city:'')
+								.replace(/varIniMoth/g,iniMes?iniMes:'')
+								.replace(/varIniYear/g,iniYear?iniYear:'')
+								//Lima.replace(/evidencia1/g, evidencia1?'<img src="https://ckbox.cloud/007a9a22f04589dcccde/assets/imZXzKi1-lLI/images/1919.png">':'')
+								.replace(/varDay/g,dias?dias:'')
+								.replace(/varMes/g,mes?mes:'')
+								.replace(/varYear/g,ano?ano:'')
+								.replace(/varMinute/g,minuto?minuto:'')
+				window.editor.setData(newEditorContent)
+			}
+	
+		
+		})
+		.catch(error => {
+			console.error('Error al cargar el contenido de la plantilla:', error);
+		});
+		const EDITAR_DOCUMENT = document.querySelector('#enviar');
+		if(EDITAR_DOCUMENT){
+			document.addEventListener("DOMContentLoaded", function() {
+			
+			console.log("EDITAR_DOCUMENT", EDITAR_DOCUMENT);
+		
+			EDITAR_DOCUMENT.addEventListener("click", () => {
+				updateContent();
+			});
+		});
+		
+			function updateContent() {
+				const contentNew = editor.getData();
+					const body = {
+						"contentNew": contentNew,
+						"stateId": 1
+					};
+					fetch(`${baseURLlOCAL}/templates/update-conetent/${idTemplate}`, {
+						method: "PUT",
+						headers: {
+							"CP-App-Client-Id": 'F5F006D8-5245-4CDF-B04F-A4E8F86C6E45',
+							'Authorization': `Bearer ${tokens}`,
+							"Content-Type":"application/json"
+						},
+						body: JSON.stringify(body),
+					})
+					.then(response => response.json())
+					.then(data => {
+						const ALERTAS = document.querySelector('#alert');
+						const MSG = document.querySelector("#mssg")
+						const DATA_CODE = data.code
+						console.log("data.message",data)
+						if(DATA_CODE === '000'){
+							ALERTAS.style.display = 'block';
+							MSG.textContent = data.data.message;
+						}else{
+							ALERTAS.style.display = 'block';
+							ALERTAS.classList.add('bg-red-300','border-red-700');
+							ALERTAS.classList.remove('bg-green-300','border-green-700');
+							MSG.classList.add('text-red-500');
+							MSG.classList.remove('text-gree-400');
+							MSG.textContent = data.data.message;
+						}
+			
+					})
+					.catch(error => {
+						console.error('Error al actualizar el contenido:', error);
+					});
+			}
+		}else{
+			return
+		}
+		
+	}
+	//  templates hijo
+	if (idFilledTemplate) {
+		console.log("editar desde aca ")
+		fetch(`${baseURLlOCAL}/filled-templates/detail/${idFilledTemplate}`,{
+			headers: {
+				"CP-App-Client-Id": 'F5F006D8-5245-4CDF-B04F-A4E8F86C6E45',
+				'Authorization': `Bearer ${tokens}`
+			}
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data && data.data) {
+				let contentToShow = '';
+				contentToShow = data.data.filledContent;
+	   
+				if (contentToShow) {
+					editor.setData(contentToShow);
+				} else {
+					console.error('No se encontró contenido adecuado para la plantilla con ID:', templateId);
+				}
+			} else {
+				console.error('No se encontró detalle para la plantilla con ID:', templateId);
+			}
+		})
+		.catch(error => {
+			console.error('Error al cargar el contenido de la plantilla:', error);
+		});
+	}
+		
+	
+	var detalle = urlParams.get('detalle');
 
 		if (!detalle || detalle === 'null') {
 			document
 			.querySelector('.cke5-editor-types-demo-document__toolbar-container')
 			.appendChild(editor.ui.view.toolbar.element);
 		} else {
-	editor.enableReadOnlyMode('myReadOnlyMode');
+		editor.enableReadOnlyMode('myReadOnlyMode');
+		}
 
- }
-    
-	const EDITAR_DOCUMENT = document.querySelector('#buttom')
+		
+    	//const disabledEdit = document.querySelector('.cke5-editor-types-demo-document__content')
+		//var edit_plantilla = urlParams.get('notEdit')
+		//if(edit_plantilla == 'true'){
+			//disabledEdit.contentEditable = false;
+	//	}
+	
+	const cargar = document.getElementById('adj');
 
-	EDITAR_DOCUMENT.addEventListener("click", () => {
-		updateContent()
-	})
+	cargar.addEventListener('click', () => {
+		const contentNew = editor.getData();
+		const body = {
+			"fileContent": contentNew,
+		};
+		window.parent.postMessage({ type: "editorContent", content: body }, '*');
+	});
 
-    function updateContent() {
-        const contentNew = editor.getData();
-        const body = {
-            "contentNew": contentNew,
-            "stateId": stateId
-        };
-        fetch(`${baseURLDEV}/templates/update-conetent/${idTemplate}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        })
-        .then(response => response.json())
-        .then(data => {
-			const ALERTAS = document.querySelector('#alert');
-			const MSG = document.querySelector("#mssg")
-			const DATA_CODE = data.code
-
-            if(DATA_CODE === '000'){
-				ALERTAS.style.display = 'block';
-				MSG.textContent = data.message;
-			}else{
-				ALERTAS.style.display = 'block';
-				ALERTAS.classList.add('bg-blue-300','border-blue-700');
-				ALERTAS.classList.remove('bg-green-300','border-green-700');
-				MSG.classList.add('text-blue-500');
-				MSG.classList.remove('text-gree-400');
-				MSG.textContent = data.message;
-			}
-
-        })
-        .catch(error => {
-            console.error('Error al actualizar el contenido:', error);
-        });
-    }
 })
 .catch((error) => {
     console.error(error.stack);

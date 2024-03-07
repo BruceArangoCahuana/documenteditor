@@ -81,10 +81,11 @@ module.exports = {
 			directory: path.join(__dirname, '/'),
 			watch: true,
 		},
+		allowedHosts: 'all',
 		watchFiles: ['./index.js', './index.html'],
 		compress: true,
 		hot: false,
-		port: 9090,
+		port: 4000,
 		devMiddleware: {
 			index: true,
 			mimeTypes: { phtml: 'text/html' },
